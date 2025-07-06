@@ -1,0 +1,629 @@
+{
+  "name": "Miton Recipe Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Získej recepty, co má uživatel rád.",
+        "memoryKey": {
+          "__rl": true,
+          "value": "recipes",
+          "mode": "list",
+          "cachedResultName": "recipes"
+        },
+        "includeDocumentMetadata": false
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        1340,
+        100
+      ],
+      "id": "e34abc63-080a-418d-acce-d382ceb87bab",
+      "name": "oblibene_recepty"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Jsi AI agent v n8n.\n\nÚkol:\n1. Náhodně vyber jednu kuchyni ze seznamu: {{ $json.preferovaneKuchyne }}.\n2. Vytvoř recept na oběd.\n3. Vyluč všechny suroviny uvedené v seznamu: {{ $json.alergie }}.\n4. Používej pouze metrické jednotky (gramy) a uveď přesné množství u každé suroviny.\n5. Pokud jsou dostupné informace z vector store \"oblibene_recepty\", zohledni je.\n6. Výstup dej jako Markdown text.\n7. Výstup bude obsahovat pouze recept, žádné další vysvětlování.\n8. Neopakuj recepty. Zkoušej nové ale zavedené.\n\nPříklad výstupu:\n\n*Kuchyně:* italská\n\n*Název:* Spaghetti Carbonara\n\n*Ingredience:*\n100 g špaget\n80 g slaniny\n2 vejce (100 g)\n50 g parmezánu\n10 g olivového oleje\n2 g černého pepře\n3 g soli\n\n*Postup:*\n1. Uvař špagety ve slané vodě podle návodu na obalu.\n2. Na pánvi osmahni nakrájenou slaninu dozlatova.\n3. V misce rozšlehej vejce s parmezánem a pepřem.\n4. Uvařené špagety vmíchej do vaječné směsi a přidej slaninu.\n5. Rychle promíchej a ihned podávej.\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1140,
+        -120
+      ],
+      "id": "a1ef8911-388a-4b27-ac85-4049ba16042a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1420,
+        300
+      ],
+      "id": "fd89fb9d-ff52-439e-9253-003afd015fe2",
+      "name": "embeddings",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "VFtD7YnCNOrif4xB",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('poslouchat_stisk_tlacitka').item.json.callback_query.message.chat.id }}",
+        "text": "=🍽️ *Váš recept ze dne {{ $now.format('dd-MM-yyyy') }}*\n\n{{ $json.output }}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "👍 Líbilo",
+                    "additionalFields": {
+                      "callback_data": "libilo"
+                    }
+                  },
+                  {
+                    "text": "Nový recept",
+                    "additionalFields": {
+                      "callback_data": "novy_recept"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "d25836c2-29df-41e0-a3be-246850f33fd8",
+      "name": "odeslat_zpravu_telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1720,
+        80
+      ],
+      "webhookId": "c0074305-ccb7-4e3f-a2d0-68523179f3ec",
+      "credentials": {
+        "telegramApi": {
+          "id": "pUKC7YC9vss0Fu3D",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        330
+      ],
+      "id": "e54e7e21-170d-486d-864c-dd30dedfd464",
+      "name": "poslouchat_stisk_tlacitka",
+      "webhookId": "f90a2d4d-07ef-4b9f-ac0b-2f04877effc3",
+      "credentials": {
+        "telegramApi": {
+          "id": "pUKC7YC9vss0Fu3D",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.callback_query.data }}",
+                    "rightValue": "novy_recept",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "a3c7ae7b-47be-4d73-a5f5-63b79a3f2f12"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "novy_recept"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "41600653-842c-4afd-bab7-af3a95cd1eeb",
+                    "leftValue": "={{ $json.callback_query.data }}",
+                    "rightValue": "libilo",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "libilo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        700,
+        330
+      ],
+      "id": "7eb97566-ae31-4783-9d05-e98a0e4659aa",
+      "name": "rozcesti"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "eddf92db-0b0e-45d6-bff3-959422e6d928",
+              "name": "text",
+              "value": "={{ $json.callback_query.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        920,
+        520
+      ],
+      "id": "cae8079c-759f-4ba1-8d5d-da44fa0ff406",
+      "name": "jen_recept"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": {
+          "__rl": true,
+          "value": "recipes",
+          "mode": "list",
+          "cachedResultName": "recipes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        1260,
+        520
+      ],
+      "id": "1606409a-8b2c-4152-8c3c-d2375569d51c",
+      "name": "oblibene_recepty_pridani"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1400,
+        740
+      ],
+      "id": "522ca1bb-d312-4b1d-9347-5510809d9c32",
+      "name": "nacitani_dat"
+    },
+    {
+      "parameters": {
+        "modelName": "models/embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        740
+      ],
+      "id": "43c77c90-7b0e-4f67-b251-b6a2ddcc6e27",
+      "name": "embeddings1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "VFtD7YnCNOrif4xB",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "meta-llama/llama-4-maverick-17b-128e-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        100
+      ],
+      "id": "611be6b1-3539-4522-a048-4214b5ee5152",
+      "name": "ai_model",
+      "credentials": {
+        "groqApi": {
+          "id": "FPq6u61OmCOhMGVh",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Zde začíná akce\nZde posloucháme stisk tlačítek \"Líbilo\" a \"Nový recept\" a poté se rozhodujeme co dále.\n- V případě \"Nový recept\" jdeme nahoru a získáváme novou zprávu s receptem od agenta\n- V případě \"Líbilo\" jdeme dolu a ukládáme recept v databázi oblíbených receptů",
+        "height": 340,
+        "width": 500,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        300,
+        160
+      ],
+      "typeVersion": 1,
+      "id": "38292f84-0bf1-452c-9fa6-d888a4abe935",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Zde můžete změnit preference kuchyní a alergií",
+        "width": 220,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        800,
+        20
+      ],
+      "typeVersion": 1,
+      "id": "a425cf26-999a-4fef-9630-52398680690f",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Toto je váš AI Agent. AI Agent má 3 součásti\n- (Povinné) Chat Model: Mozek agenta, velký jazykový model (LLM). Ten to celé řídí.\n- (nepovinné) Memory: Agentovi můžete přidat paměť, aby si pamatoval informace z vašich předchozích chatů. Nebo v našem případě, jsme agentovi řekli, ať neopakuje recepty, což je možné díky této paměti.\n- (nepovinné) Tool: Nástrojů můžete připojit několik, ať už je to vyhledávání na internetu, přístup k posílání a emailů, nebo zapisování a čtení dokumentů. V našem případě je to přístup do chytré vektorové databáze obsahující oblíbené recepty.\n",
+        "height": 760,
+        "width": 520,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1080,
+        -340
+      ],
+      "typeVersion": 1,
+      "id": "f3eed249-7dd3-49a4-ac3f-8fe86600356a",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "Tady odesíláte výstup z agenta do Telegramového chatu",
+        "height": 240,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1640,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "bbd87331-d7f2-48dd-aa51-f2d97eaf175e",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "\n\n\n\n\n\n\n\n\n\n\n\nZde vyndáme z informací z telegramu jen text receptu",
+        "height": 220,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        780,
+        520
+      ],
+      "typeVersion": 1,
+      "id": "29441cfe-362b-4731-addc-cfb60e4701cb",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "Zde se ukládá oblíbený recept, aby jej agent mohl vyhledat v oblibene_recepty",
+        "height": 420,
+        "width": 420,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1260,
+        440
+      ],
+      "typeVersion": 1,
+      "id": "5995f6ef-8edb-4b22-aacf-f02ae942fbe1",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Úvod chatu\nTento blok je potřeba spustit jednou na začátku a poté už není potřeba.\n**Zde musíte přídat _chat.id_ získané během nastavování Telegram bota**\n",
+        "height": 300,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        320,
+        -300
+      ],
+      "typeVersion": 1,
+      "id": "affa2429-17c0-4b77-9a4c-82b5851d2a67",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "chatId": "1892134664",
+        "text": "=👨‍🍳 Vítej u svého osobního kuchařského asistenta!\nJsem tu, abych ti pomohl s vařením na míru.\n\n🍽️ Nový recept\nToužíš po inspiraci? Klikni na „Nový recept“ a připravím něco podle tvého vkusu.\n\n👍 Líbilo se mi\nPokud ti nějaký recept chutnal, klikni na „Líbilo“ pod ním. Pomůže mi to trefit se příště ještě lépe.",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Nový recept",
+                    "additionalFields": {
+                      "callback_data": "novy_recept"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "03b0805b-6b3c-458d-849c-2972f2b8ec21",
+      "name": "uvodni_zprava",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        380,
+        -160
+      ],
+      "webhookId": "c0074305-ccb7-4e3f-a2d0-68523179f3ec",
+      "credentials": {
+        "telegramApi": {
+          "id": "pUKC7YC9vss0Fu3D",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "002b6ea4-7471-4264-aba2-9c8f7ed86fb1",
+              "name": "preferovaneKuchyne",
+              "value": "=\"česká, italská\"",
+              "type": "string"
+            },
+            {
+              "id": "0a3880fc-7581-4f39-97e1-64fa60a60564",
+              "name": "alergie",
+              "value": "=buráky",
+              "type": "string"
+            },
+            {
+              "id": "b93affd4-b05a-4224-b0b4-f68ce9615ced",
+              "name": "=sessionId",
+              "value": "={{ $json.callback_query.message.chat.id }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "68287029-3562-4da9-ad99-91f927586614",
+      "name": "nastaveni_preferenci",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        920,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 500
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1220,
+        100
+      ],
+      "id": "b036d21c-d5ef-4915-9b69-500ed6ee4a6a",
+      "name": "pamet"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "oblibene_recepty": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "odeslat_zpravu_telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "embeddings": {
+      "ai_embedding": [
+        [
+          {
+            "node": "oblibene_recepty",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "poslouchat_stisk_tlacitka": {
+      "main": [
+        [
+          {
+            "node": "rozcesti",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "rozcesti": {
+      "main": [
+        [
+          {
+            "node": "nastaveni_preferenci",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "jen_recept",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "jen_recept": {
+      "main": [
+        [
+          {
+            "node": "oblibene_recepty_pridani",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "nacitani_dat": {
+      "ai_document": [
+        [
+          {
+            "node": "oblibene_recepty_pridani",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "embeddings1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "oblibene_recepty_pridani",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ai_model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "nastaveni_preferenci": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "pamet": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8835cec3-1971-4349-be20-1faac7d64fef",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "da2da4ed9bef6208906d620416fee5b041c6fe3523cc13c53c91b2891ab6d460"
+  },
+  "id": "W3YkhNgZWlvoKEpB",
+  "tags": []
+}

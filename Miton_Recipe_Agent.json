@@ -1,5 +1,5 @@
 {
-  "name": "Miton Recipe Agent",
+  "name": "My workflow",
   "nodes": [
     {
       "parameters": {
@@ -16,10 +16,10 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
       "typeVersion": 1.3,
       "position": [
-        1340,
-        100
+        -740,
+        -200
       ],
-      "id": "e34abc63-080a-418d-acce-d382ceb87bab",
+      "id": "bf01ebca-91e8-44b6-ab86-6ceb48fda465",
       "name": "oblibene_recepty"
     },
     {
@@ -31,10 +31,10 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2,
       "position": [
-        1140,
-        -120
+        -940,
+        -420
       ],
-      "id": "a1ef8911-388a-4b27-ac85-4049ba16042a",
+      "id": "35129fc6-f70b-440f-a1ce-1682387eaae7",
       "name": "AI Agent"
     },
     {
@@ -44,10 +44,10 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
-        1420,
-        300
+        -660,
+        20
       ],
-      "id": "fd89fb9d-ff52-439e-9253-003afd015fe2",
+      "id": "8f9549ce-e1af-4a00-ac3b-a9e4926df413",
       "name": "embeddings",
       "credentials": {
         "googlePalmApi": {
@@ -87,13 +87,13 @@
           "appendAttribution": false
         }
       },
-      "id": "d25836c2-29df-41e0-a3be-246850f33fd8",
+      "id": "d0d0b737-aded-4da6-8f76-99d3ee1cde0a",
       "name": "odeslat_zpravu_telegram",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1720,
-        80
+        -360,
+        -220
       ],
       "webhookId": "c0074305-ccb7-4e3f-a2d0-68523179f3ec",
       "credentials": {
@@ -113,10 +113,10 @@
       "type": "n8n-nodes-base.telegramTrigger",
       "typeVersion": 1.2,
       "position": [
-        480,
-        330
+        -1600,
+        40
       ],
-      "id": "e54e7e21-170d-486d-864c-dd30dedfd464",
+      "id": "4efdc5f8-02a5-4e28-b221-2c4bf2ddd563",
       "name": "poslouchat_stisk_tlacitka",
       "webhookId": "f90a2d4d-07ef-4b9f-ac0b-2f04877effc3",
       "credentials": {
@@ -186,10 +186,10 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        700,
-        330
+        -1380,
+        40
       ],
-      "id": "7eb97566-ae31-4783-9d05-e98a0e4659aa",
+      "id": "dee9d01b-f107-462a-be5c-b350bd65bb1f",
       "name": "rozcesti"
     },
     {
@@ -209,10 +209,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        920,
-        520
+        -1160,
+        240
       ],
-      "id": "cae8079c-759f-4ba1-8d5d-da44fa0ff406",
+      "id": "fd2359aa-494e-4cd3-b14d-22e5dbfb2c9d",
       "name": "jen_recept"
     },
     {
@@ -228,10 +228,10 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
       "typeVersion": 1.3,
       "position": [
-        1260,
-        520
+        -820,
+        240
       ],
-      "id": "1606409a-8b2c-4152-8c3c-d2375569d51c",
+      "id": "ac62c341-2bdf-4a2d-9322-46c2085f6688",
       "name": "oblibene_recepty_pridani"
     },
     {
@@ -241,10 +241,10 @@
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
       "position": [
-        1400,
-        740
+        -680,
+        460
       ],
-      "id": "522ca1bb-d312-4b1d-9347-5510809d9c32",
+      "id": "222449d0-d815-4372-83d5-605182dccafe",
       "name": "nacitani_dat"
     },
     {
@@ -254,10 +254,10 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
-        1280,
-        740
+        -800,
+        460
       ],
-      "id": "43c77c90-7b0e-4f67-b251-b6a2ddcc6e27",
+      "id": "257c84f0-7bd6-4a10-a686-a60070ebaefa",
       "name": "embeddings1",
       "credentials": {
         "googlePalmApi": {
@@ -274,10 +274,10 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
       "typeVersion": 1,
       "position": [
-        1100,
-        100
+        -980,
+        -200
       ],
-      "id": "611be6b1-3539-4522-a048-4214b5ee5152",
+      "id": "9f700bbc-b93b-4a6c-93aa-961447902fd7",
       "name": "ai_model",
       "credentials": {
         "groqApi": {
@@ -295,11 +295,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        300,
-        160
+        -1780,
+        -140
       ],
       "typeVersion": 1,
-      "id": "38292f84-0bf1-452c-9fa6-d888a4abe935",
+      "id": "a54a28a4-e42f-4e6c-aae0-bd466858d0a0",
       "name": "Sticky Note"
     },
     {
@@ -310,11 +310,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        800,
-        20
+        -1280,
+        -280
       ],
       "typeVersion": 1,
-      "id": "a425cf26-999a-4fef-9630-52398680690f",
+      "id": "c56a35e0-9cc0-4801-89ba-300e8d1be42b",
       "name": "Sticky Note1"
     },
     {
@@ -326,11 +326,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1080,
-        -340
+        -1000,
+        -640
       ],
       "typeVersion": 1,
-      "id": "f3eed249-7dd3-49a4-ac3f-8fe86600356a",
+      "id": "ae70a2b3-7462-4a77-a1c6-11442eed1285",
       "name": "Sticky Note2"
     },
     {
@@ -341,11 +341,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1640,
-        0
+        -440,
+        -300
       ],
       "typeVersion": 1,
-      "id": "bbd87331-d7f2-48dd-aa51-f2d97eaf175e",
+      "id": "5cc2d0c6-b7b6-43a5-8b57-827da6846786",
       "name": "Sticky Note3"
     },
     {
@@ -356,11 +356,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        780,
-        520
+        -1300,
+        240
       ],
       "typeVersion": 1,
-      "id": "29441cfe-362b-4731-addc-cfb60e4701cb",
+      "id": "0349d6f1-0e01-46a4-85d4-14d01db9a981",
       "name": "Sticky Note4"
     },
     {
@@ -372,11 +372,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1260,
-        440
+        -820,
+        160
       ],
       "typeVersion": 1,
-      "id": "5995f6ef-8edb-4b22-aacf-f02ae942fbe1",
+      "id": "81180b2a-9ac6-4575-afbd-563fde504c7a",
       "name": "Sticky Note5"
     },
     {
@@ -387,16 +387,15 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        320,
-        -300
+        -1760,
+        -600
       ],
       "typeVersion": 1,
-      "id": "affa2429-17c0-4b77-9a4c-82b5851d2a67",
+      "id": "c9ecacc6-c262-4705-a84c-d250530d87c8",
       "name": "Sticky Note6"
     },
     {
       "parameters": {
-        "chatId": "1892134664",
         "text": "=👨‍🍳 Vítej u svého osobního kuchařského asistenta!\nJsem tu, abych ti pomohl s vařením na míru.\n\n🍽️ Nový recept\nToužíš po inspiraci? Klikni na „Nový recept“ a připravím něco podle tvého vkusu.\n\n👍 Líbilo se mi\nPokud ti nějaký recept chutnal, klikni na „Líbilo“ pod ním. Pomůže mi to trefit se příště ještě lépe.",
         "replyMarkup": "inlineKeyboard",
         "inlineKeyboard": {
@@ -419,13 +418,13 @@
           "appendAttribution": false
         }
       },
-      "id": "03b0805b-6b3c-458d-849c-2972f2b8ec21",
+      "id": "8a4867dc-ebe7-477a-b9ae-64efe5c597e7",
       "name": "uvodni_zprava",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        380,
-        -160
+        -1700,
+        -460
       ],
       "webhookId": "c0074305-ccb7-4e3f-a2d0-68523179f3ec",
       "credentials": {
@@ -461,13 +460,13 @@
         },
         "options": {}
       },
-      "id": "68287029-3562-4da9-ad99-91f927586614",
+      "id": "a324ae82-9fca-44cf-b950-ded02670cd81",
       "name": "nastaveni_preferenci",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        920,
-        80
+        -1160,
+        -220
       ]
     },
     {
@@ -477,10 +476,10 @@
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.3,
       "position": [
-        1220,
-        100
+        -860,
+        -200
       ],
-      "id": "b036d21c-d5ef-4915-9b69-500ed6ee4a6a",
+      "id": "bd93fd23-9852-4763-b09a-df647f6bac48",
       "name": "pamet"
     }
   ],
@@ -619,11 +618,11 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "8835cec3-1971-4349-be20-1faac7d64fef",
+  "versionId": "c4c0f6bf-23eb-4347-95d8-fe3b4c25e4b6",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "da2da4ed9bef6208906d620416fee5b041c6fe3523cc13c53c91b2891ab6d460"
   },
-  "id": "W3YkhNgZWlvoKEpB",
+  "id": "zXqO9Ynorqll6zl3",
   "tags": []
 }
